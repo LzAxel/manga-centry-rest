@@ -10,16 +10,36 @@ CREATE TABLE users
 CREATE TABLE manga
 (
     id SERIAL PRIMARY KEY,
-    name varchar(100) not null unique,
+    name varchar(100) not null,
+    alternative_name varchar(100),
     views integer default 0 not null,
-    preview varchar(255) not null,
+    preview_url varchar(255) not null,
     uploader_id integer references users(id) on delete cascade
 );
 
-CREATE TABLE manga_image
+CREATE TABLE manga_chapter
+(
+    id SERIAL PRIMARY KEY,
+    preview_url varchar(255) not null,
+    manga_id integer references manga(id) on delete cascade,
+    number integer default 0
+);
+
+CREATE TABLE chapter_image
 (
     id serial primary key,
     url varchar(255) not null,
-    manga_id integer references manga(id) on delete cascade
+    chapter_id integer references manga_chapter(id) on delete cascade
 );
 
+CREATE TABLE likes
+(
+    manga_id integer references manga(id) on delete cascade,
+    user_id integer references users(id) on delete cascade
+);
+
+CREATE TABLE read_manga
+(
+    manga_id integer references manga(id) on delete cascade,
+    user_id integer references users(id) on delete cascade
+);
