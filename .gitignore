@@ -1,0 +1,4 @@
+configs/*
+!configs/template.yml
+!schema/*
+main
