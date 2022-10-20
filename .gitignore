@@ -3,3 +3,4 @@ configs/*
 !schema/*
 main
 upload
+.vscode/
