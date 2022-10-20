@@ -29,8 +29,16 @@ func (h *Handler) InitRoutes() *gin.Engine {
 		{
 			manga.GET("/:id", h.getMangaById)
 			manga.POST("/", h.createManga)
-			manga.PUT("/:id", h.updateManga)
+			manga.PATCH("/:id", h.updateManga)
 			manga.DELETE("/:id", h.deleteManga)
+
+		}
+		chapter := api.Group("/chapter")
+		{
+			chapter.GET("/:id", h.getChapterById)
+			chapter.POST("/", h.createChapter)
+			chapter.PATCH("/:id", h.updateChapter)
+			chapter.DELETE("/:id", h.deleteChapter)
 		}
 	}
 

@@ -2,7 +2,7 @@ package repository
 
 import (
 	"fmt"
-	"mangacentry/models"
+	"mangacentry/internal/core"
 
 	"github.com/jmoiron/sqlx"
 )
@@ -15,7 +15,7 @@ func NewAuthPostgres(db *sqlx.DB) *AuthPostgres {
 	return &AuthPostgres{db: db}
 }
 
-func (r *AuthPostgres) CreateUser(user models.User) (int, error) {
+func (r *AuthPostgres) CreateUser(user core.User) (int, error) {
 	var id int
 	query := fmt.Sprintf("INSERT INTO %s (username, password_hash, about) values ($1, $2, $3) RETURNING id",
 		userTable)
@@ -27,8 +27,8 @@ func (r *AuthPostgres) CreateUser(user models.User) (int, error) {
 	return id, nil
 }
 
-func (r *AuthPostgres) GetUser(username, password string) (models.User, error) {
-	var user models.User
+func (r *AuthPostgres) GetUser(username, password string) (core.User, error) {
+	var user core.User
 	query := fmt.Sprintf("SELECT id FROM %s WHERE username=$1 AND password_hash=$2", userTable)
 	err := r.db.Get(&user, query, username, password)
 

@@ -2,7 +2,7 @@ package repository
 
 import (
 	"fmt"
-	"mangacentry/models"
+	"mangacentry/internal/core"
 	"strings"
 
 	"github.com/jmoiron/sqlx"
@@ -17,25 +17,25 @@ func NewMangaPostgres(db *sqlx.DB) *MangaPostgres {
 	return &MangaPostgres{db: db}
 }
 
-func (r *MangaPostgres) GetById(mangaId int) (models.Manga, error) {
-	var manga models.Manga
+func (r *MangaPostgres) GetById(mangaId int) (core.Manga, error) {
+	var manga core.Manga
 	logrus.Debugln("getting manga by id in postgres db")
 	query := fmt.Sprintf("SELECT * FROM %s WHERE id = $1",
 		mangaTable)
 	err := r.db.Get(&manga, query, mangaId)
 	if err != nil {
-		return models.Manga{}, err
+		return core.Manga{}, err
 	}
 
 	return manga, nil
 }
 
-func (r *MangaPostgres) Create(userId int, manga models.Manga) (int, error) {
+func (r *MangaPostgres) Create(userId int, manga core.Manga) (int, error) {
 	var id int
 	logrus.Debugln("inserting manga into postgres db")
-	query := fmt.Sprintf("INSERT INTO %s (name, preview, uploader_id) values ($1, $2, $3) RETURNING id",
+	query := fmt.Sprintf("INSERT INTO %s (name, preview_url, uploader_id, alternative_name) values ($1, $2, $3, $4) RETURNING id",
 		mangaTable)
-	row := r.db.QueryRow(query, manga.Name, manga.Preview, manga.UploaderId)
+	row := r.db.QueryRow(query, manga.Name, manga.Preview, manga.UploaderId, manga.AlternativeName)
 	if err := row.Scan(&id); err != nil {
 		return 0, err
 	}
@@ -43,7 +43,7 @@ func (r *MangaPostgres) Create(userId int, manga models.Manga) (int, error) {
 	return id, nil
 }
 
-func (r *MangaPostgres) Update(userId, mangaId int, updateInput models.UpdateMangaInput) error {
+func (r *MangaPostgres) Update(userId, mangaId int, updateInput core.UpdateMangaInput) error {
 	setValues := make([]string, 0)
 	args := make([]interface{}, 0)
 	argId := 1
@@ -55,7 +55,7 @@ func (r *MangaPostgres) Update(userId, mangaId int, updateInput models.UpdateMan
 	}
 
 	if updateInput.Preview != nil {
-		setValues = append(setValues, fmt.Sprintf("preview=$%d", argId))
+		setValues = append(setValues, fmt.Sprintf("preview_url=$%d", argId))
 		args = append(args, *updateInput.Preview)
 		argId++
 	}

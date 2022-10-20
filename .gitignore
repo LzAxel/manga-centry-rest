@@ -2,3 +2,4 @@ configs/*
 !configs/template.yml
 !schema/*
 main
+upload

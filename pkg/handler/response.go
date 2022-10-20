@@ -6,10 +6,10 @@ import (
 )
 
 type errorResponse struct {
-	Message string `json:"message"`
+	Error string `json:"error"`
 }
 
-func NewErrorResponse(ctx *gin.Context, statusCode int, message string) {
-	logrus.Error(message)
-	ctx.AbortWithStatusJSON(statusCode, errorResponse{Message: message})
+func NewErrorResponse(ctx *gin.Context, statusCode int, errMessage string) {
+	logrus.Error(errMessage)
+	ctx.AbortWithStatusJSON(statusCode, errorResponse{Error: errMessage})
 }

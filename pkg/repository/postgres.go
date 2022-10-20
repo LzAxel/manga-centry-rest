@@ -7,9 +7,10 @@ import (
 )
 
 const (
-	userTable       = "users"
-	mangaTable      = "manga"
-	mangaImageTable = "manga_image"
+	userTable         = "users"
+	mangaTable        = "manga"
+	chapterTable      = "manga_chapter"
+	chapterImageTable = "chapter_image"
 )
 
 type Config struct {
@@ -24,7 +25,6 @@ type Config struct {
 func NewPostgresDB(cfg Config) (*sqlx.DB, error) {
 	db, err := sqlx.Open("postgres", fmt.Sprintf("host=%s port=%s user=%s dbname=%s password=%s sslmode=%s",
 		cfg.Host, cfg.Port, cfg.Username, cfg.DBName, cfg.Password, cfg.SSLMode))
-
 	if err != nil {
 		return nil, err
 	}

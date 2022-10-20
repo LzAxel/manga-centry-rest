@@ -1,7 +1,7 @@
 package handler
 
 import (
-	"mangacentry/models"
+	"mangacentry/internal/core"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -9,7 +9,7 @@ import (
 )
 
 func (h *Handler) signUp(ctx *gin.Context) {
-	var input models.User
+	var input core.User
 
 	if err := ctx.BindJSON(&input); err != nil {
 		NewErrorResponse(ctx, http.StatusBadRequest, err.Error())

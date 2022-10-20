@@ -22,6 +22,7 @@ CREATE TABLE manga_chapter
     id SERIAL PRIMARY KEY,
     preview_url varchar(255) not null,
     manga_id integer references manga(id) on delete cascade,
+    uploader_id integer references users(id) on delete cascade,
     number integer default 0
 );
 
