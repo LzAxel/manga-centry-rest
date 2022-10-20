@@ -2,6 +2,7 @@ package repository
 
 import (
 	"mangacentry/internal/core"
+	"mangacentry/pkg/repository/psql"
 
 	"github.com/jmoiron/sqlx"
 )
@@ -41,9 +42,9 @@ type Repository struct {
 
 func NewRepository(db *sqlx.DB) *Repository {
 	return &Repository{
-		Authorization: NewAuthPostgres(db),
-		Manga:         NewMangaPostgres(db),
-		Chapter:       NewChapterPostgres(db),
-		Image:         NewImagePostgres(db),
+		Authorization: psql.NewAuthPostgres(db),
+		Manga:         psql.NewMangaPostgres(db),
+		Chapter:       psql.NewChapterPostgres(db),
+		Image:         psql.NewImagePostgres(db),
 	}
 }

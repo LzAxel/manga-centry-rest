@@ -13,6 +13,32 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
+const (
+	ImageExtansions = "png webp jpg gif"
+)
+
+func sortFiles(reader *zip.ReadCloser) {
+	sort.Slice(reader.File, func(i, j int) bool {
+		iStr := strings.Split(reader.File[i].Name, ".")[0]
+		jStr := strings.Split(reader.File[j].Name, ".")[0]
+		comp := strings.Compare(iStr, jStr)
+		if comp == -1 {
+			return true
+		} else {
+			return false
+		}
+	})
+}
+
+func validateImageExtansion(filename string) error {
+	fileNameSplit := strings.Split(filename, ".")
+	fileExtansion := fileNameSplit[len(filename)-1]
+	if !strings.Contains(ImageExtansions, fileExtansion) {
+		return fmt.Errorf("invalid file extansion: %s", fileExtansion)
+	}
+	return nil
+}
+
 func UnzipImages(archivePath, outputPath string) ([]string, error) {
 	var files []string
 
@@ -26,30 +52,15 @@ func UnzipImages(archivePath, outputPath string) ([]string, error) {
 	if err != nil {
 		return files, err
 	}
-	archive := reader.File
 	logrus.Debugln("sorting archive")
-	sort.Slice(archive, func(i, j int) bool {
-		iStr := strings.Split(reader.File[i].Name, ".")[0]
-		jStr := strings.Split(reader.File[j].Name, ".")[0]
-		comp := strings.Compare(iStr, jStr)
-		if comp == -1 {
-			return true
-		} else {
-			return false
-		}
-	})
+	sortFiles(reader)
 
 	logrus.Debugln("extracting files from archive")
-	for i, f := range archive {
-
-		fileNameSplit := strings.Split(f.Name, ".")
-		fileExtansion := fileNameSplit[len(fileNameSplit)-1]
-		if !strings.Contains("png webp jpg gif", fileExtansion) {
-			logrus.Debugf("invalid file in archive: %s", f.Name)
+	for i, f := range reader.File {
+		if err := validateImageExtansion(f.Name); err != nil {
 			continue
 		}
-
-		fileName := fmt.Sprintf("%s.%s", strconv.Itoa(i), fileExtansion)
+		fileName := fmt.Sprintf("%s%s", strconv.Itoa(i), filepath.Ext(f.Name))
 		filePath := filepath.Join(outputPath, fileName)
 		outputFilePath, err := os.OpenFile(filePath, os.O_WRONLY|os.O_CREATE|os.O_TRUNC, f.Mode())
 		if err != nil {

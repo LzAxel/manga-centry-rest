@@ -4,6 +4,7 @@ import (
 	"mangacentry"
 	"mangacentry/pkg/handler"
 	"mangacentry/pkg/repository"
+	"mangacentry/pkg/repository/psql"
 	"mangacentry/pkg/service"
 
 	"github.com/sirupsen/logrus"
@@ -24,7 +25,7 @@ func main() {
 		logrus.SetLevel(logrus.DebugLevel)
 		logrus.Debugln("debug mode enabled")
 	}
-	db, err := repository.NewPostgresDB(repository.Config{
+	db, err := psql.NewPostgresDB(psql.Config{
 		Host:     viper.GetString("db.host"),
 		Port:     viper.GetString("db.port"),
 		Username: viper.GetString("db.username"),
